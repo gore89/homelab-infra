@@ -1,0 +1,45 @@
+---
+- name: Deploy Checkmk Agent via Headscale VPN
+  hosts: ubuntu-hosts  
+  become: true
+
+  vars:
+    cmk_server: "100.64.0.5:8080"
+    cmk_site: "monitoring"
+    cmk_agent_url: "http://{{ cmk_server }}/{{ cmk_site }}/check_mk/agents/check-mk-agent_all.deb"
+    cmk_registration_server: "100.64.0.5:8000"
+    cmk_user: "automation"
+    headscale_monitoring_ip: "100.64.0.5"
+
+
+  tasks:
+    - name: Download Checkmk Agent (.deb)
+      ansible.builtin.get_url:
+        url: "{{ cmk_agent_url }}"
+        dest: "/tmp/check-mk-agent.deb"
+
+    - name: Install Checkmk Agent
+      ansible.builtin.apt:
+        deb: "/tmp/check-mk-agent.deb"
+        state: present
+
+    - name: Allow Checkmk port 6556 only from Monitoring Server (UFW)
+      community.general.ufw:
+        rule: allow
+        src: "{{ headscale_monitoring_ip }}"
+        port: '6556'
+        proto: tcp
+      ignore_errors: true
+
+    - name: Register Agent with Checkmk Server (TLS)
+      ansible.builtin.command: >
+        cmk-agent-ctl register 
+        --hostname {{ inventory_hostname }} 
+        --server {{ cmk_registration_server }} 
+        --site {{ cmk_site }} 
+        --user {{ cmk_user }} 
+        --password {{ cmk_secret }} 
+        --trust-cert
+      args:
+        # Verhindert, dass der Agent sich bei jedem Playbook-Lauf neu registriert
+        creates: /etc/cmk-agent/registered
