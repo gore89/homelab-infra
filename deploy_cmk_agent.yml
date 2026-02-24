@@ -1,6 +1,6 @@
 ---
 - name: Deploy Checkmk Agent via Headscale VPN
-  hosts: ubuntu-hosts  
+  hosts: ubuntu_hosts  
   become: true
 
   vars:
