@@ -1,0 +1,14 @@
+---
+- name: Audit Listening Ports for UFW Configuration
+  hosts: ubuntu_hosts
+  remote_user: ansible
+
+  tasks:
+    - name: Get all listening TCP and UDP ports
+      ansible.builtin.shell: ss -tulpn | grep LISTEN
+      register: port_output
+      ignore_errors: true 
+
+    - name: Show listening ports
+      ansible.builtin.debug:
+        var: port_output.stdout_lines
