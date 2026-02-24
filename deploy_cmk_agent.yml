@@ -7,7 +7,7 @@
   vars:
     cmk_server: "100.64.0.5:8080"
     cmk_site: "monitoring"
-    cmk_agent_url: "http://{{ cmk_server }}/{{ cmk_site }}/check_mk/agents/check-mk-agent_all.deb"
+    cmk_agent_url: "http://100.64.0.5:8080/monitoring/check_mk/agents/check-mk-agent_2.4.0p22-1_all.deb"
     cmk_registration_server: "100.64.0.5:8000"
     cmk_user: "automation"
     headscale_monitoring_ip: "100.64.0.5"
