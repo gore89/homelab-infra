@@ -1,6 +1,7 @@
 ---
 - name: Deploy Checkmk Agent via Headscale VPN
   hosts: ubuntu_hosts  
+  remote_user: ansible
   become: true
 
   vars:
